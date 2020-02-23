@@ -13,6 +13,5 @@ namespace bd_boga_sql_server {
         public Form1() {
             InitializeComponent();
         }
-
     }
 }

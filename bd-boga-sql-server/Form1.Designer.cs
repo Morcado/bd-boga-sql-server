@@ -52,27 +52,27 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(379, 10);
+            this.button1.Location = new System.Drawing.Point(379, 20);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(95, 35);
+            this.button1.Size = new System.Drawing.Size(95, 25);
             this.button1.TabIndex = 2;
             this.button1.Text = "Agregar";
             this.button1.UseVisualStyleBackColor = true;
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(484, 10);
+            this.button2.Location = new System.Drawing.Point(484, 20);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(95, 35);
+            this.button2.Size = new System.Drawing.Size(95, 25);
             this.button2.TabIndex = 2;
             this.button2.Text = "Modificar";
             this.button2.UseVisualStyleBackColor = true;
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(591, 10);
+            this.button3.Location = new System.Drawing.Point(591, 20);
             this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(95, 35);
+            this.button3.Size = new System.Drawing.Size(95, 25);
             this.button3.TabIndex = 2;
             this.button3.Text = "Eliminar";
             this.button3.UseVisualStyleBackColor = true;

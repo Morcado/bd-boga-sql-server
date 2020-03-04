@@ -36,26 +36,32 @@
             // 
             // dtTabla
             // 
+            this.dtTabla.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.dtTabla.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dtTabla.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dtTabla.Location = new System.Drawing.Point(21, 100);
+            this.dtTabla.Location = new System.Drawing.Point(21, 106);
             this.dtTabla.Name = "dtTabla";
-            this.dtTabla.Size = new System.Drawing.Size(665, 323);
+            this.dtTabla.Size = new System.Drawing.Size(791, 317);
             this.dtTabla.TabIndex = 0;
             this.dtTabla.RowHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView1_RowHeaderMouseClick);
             // 
             // dtTupla
             // 
+            this.dtTupla.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.dtTupla.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dtTupla.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dtTupla.Location = new System.Drawing.Point(21, 56);
             this.dtTupla.Name = "dtTupla";
-            this.dtTupla.Size = new System.Drawing.Size(665, 38);
+            this.dtTupla.Size = new System.Drawing.Size(791, 44);
             this.dtTupla.TabIndex = 1;
             // 
             // buttonAgregar
             // 
-            this.buttonAgregar.Location = new System.Drawing.Point(379, 20);
+            this.buttonAgregar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonAgregar.Location = new System.Drawing.Point(505, 20);
             this.buttonAgregar.Name = "buttonAgregar";
             this.buttonAgregar.Size = new System.Drawing.Size(95, 25);
             this.buttonAgregar.TabIndex = 2;
@@ -65,7 +71,8 @@
             // 
             // buttonModificar
             // 
-            this.buttonModificar.Location = new System.Drawing.Point(484, 20);
+            this.buttonModificar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonModificar.Location = new System.Drawing.Point(610, 20);
             this.buttonModificar.Name = "buttonModificar";
             this.buttonModificar.Size = new System.Drawing.Size(95, 25);
             this.buttonModificar.TabIndex = 2;
@@ -75,7 +82,8 @@
             // 
             // buttonEliminar
             // 
-            this.buttonEliminar.Location = new System.Drawing.Point(591, 20);
+            this.buttonEliminar.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonEliminar.Location = new System.Drawing.Point(717, 20);
             this.buttonEliminar.Name = "buttonEliminar";
             this.buttonEliminar.Size = new System.Drawing.Size(95, 25);
             this.buttonEliminar.TabIndex = 2;
@@ -119,7 +127,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(710, 450);
+            this.ClientSize = new System.Drawing.Size(836, 450);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.comboBox1);
             this.Controls.Add(this.buttonEliminar);

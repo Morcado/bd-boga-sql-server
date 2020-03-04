@@ -11,6 +11,8 @@ namespace bd_boga_sql_server
         public string Nombre { get ; }
         public List<Atributo> Atributos { get ; private set ; }
         public string insertQuery { get ; protected set ; }
+        public string deleteQuery { get ; protected set ; }
+        public string modifyQuery { get ; protected set ; }
         public List<string> Variables { get ; private set ; }
 
         public Tabla( string nombre )

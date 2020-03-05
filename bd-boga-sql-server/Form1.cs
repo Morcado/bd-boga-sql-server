@@ -15,7 +15,7 @@ namespace bd_boga_sql_server {
         Tabla[] tablas =  new Tabla[11];
         public Form1() {
             InitializeComponent();
-            tablas[0] = new TipoTrabajo("TipoTrabajo");
+            tablas[0] = new TipoTrabajo();
         }
 
         private void comboBox1_SelectedValueChanged(object sender, EventArgs e) {
@@ -27,12 +27,12 @@ namespace bd_boga_sql_server {
             DataTable dt = new DataTable();
 
             if (tablas[index] != null) {
-                foreach (var attribute in tablas[index].Atributos) {
-                    dt.Columns.Add(new DataColumn(attribute.Nombre));
+                foreach (DataColumn attribute in tablas[index].Columns ) {
+                    dt.Columns.Add( new DataColumn( attribute.ColumnName ));
                 }
             }
 
-            string query = String.Format("SELECT * FROM {0}", tablas[0].Nombre);
+            string query = String.Format("SELECT * FROM {0}", tablas[0].TableName );
             // crea un adaptador que va a obtener los datos por medio de la conección
             //SqlDataAdapter adapter = new SqlDataAdapter(query, connectionSQL);
             //adapter.Fill(dt);
@@ -50,11 +50,11 @@ namespace bd_boga_sql_server {
             // la secuencia para insertar en la vase de datos, se usan los parametros @Nom, @Nac para
 
             try {
-                SqlCommand sqlCommand = new SqlCommand(tablas[index].insertQuery, connectionSQL);
+                SqlCommand sqlCommand = new SqlCommand(tablas[index].InsertQuery, connectionSQL);
                 sqlCommand.ExecuteNonQuery();
                 // Actualiza la tabla
 
-                foreach (var variable in tablas[index].Variables) {
+                foreach (var variable in tablas[index].NomVariables ) {
                     sqlCommand.Parameters.AddWithValue(variable, "poner valor aqui");
                 }
 

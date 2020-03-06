@@ -117,6 +117,7 @@ namespace bd_boga_sql_server
     {
         public MaterialParaTrabajo() : base( "MaterialParaTrabajo" )
         {
+            PK = false;
             string[] columnas = new string[] {
                 "IdTrabajo",
                 "IdMaterial"

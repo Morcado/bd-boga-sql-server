@@ -14,7 +14,9 @@ namespace bd_boga_sql_server
         public string ModifyQuery { get ; protected set ; }
         public string[] NomVariables { get ; protected set ; }
 
-        public Tabla( string nombre ) : base( nombre ) {} //=> Variables = new List<string>();
+        public bool PK { get; internal set; }
+
+        public Tabla( string nombre ) : base( nombre ) { PK = true; } //=> Variables = new List<string>();
 
         public void InitializeQuerys( string[] columnas )
         {

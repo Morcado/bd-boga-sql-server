@@ -39,6 +39,7 @@ namespace bd_boga_sql_server {
         }
 
         private void ShowTable(int index) {
+            dtTable.Columns.Clear();
             int i = 0;
             string query = String.Format("SELECT * FROM Taller.{0}", tablas[index].TableName);
              // crea un adaptador que va a obtener los datos por medio de la conección
@@ -80,6 +81,7 @@ namespace bd_boga_sql_server {
                 }
 
                 sqlCommand.ExecuteNonQuery();
+                ShowTable(index);
                 // Actualiza la tabla
 
             } 
@@ -87,7 +89,7 @@ namespace bd_boga_sql_server {
                 MessageBox.Show("Error: " + ex.Message);
             }
 
-            ShowTable(index);
+           
         }
 
         private List<string> GetRowValues() {
@@ -104,7 +106,25 @@ namespace bd_boga_sql_server {
         }
 
         private void buttonEliminar_Click(object sender, EventArgs e) {
+            DeleteData(comboBox1.SelectedIndex);
+        }
 
+        private void DeleteData(int index) {
+
+            try {
+                int clave = int.Parse(dtTable[0, dtTable.CurrentCell.RowIndex].Value.ToString());
+                SqlCommand sqlCommand = new SqlCommand(tablas[index].DeleteQuery, connectionSQL);
+                sqlCommand.Parameters.AddWithValue(tablas[index].NomVariables[0], clave);
+
+                // Agrega los valores al los parámetros del comando sql y lo ejecuta
+
+                sqlCommand.ExecuteNonQuery();
+                // Actualiza la tabla
+                ShowTable(index);
+
+            } catch (Exception ex) {
+                MessageBox.Show("Error: " + ex.Message);
+            }
         }
 
         private void dataGridView1_RowHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e) {

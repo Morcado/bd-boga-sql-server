@@ -39,20 +39,19 @@ namespace bd_boga_sql_server {
         }
 
         private void ShowTable(int index) {
-            dtTable.Columns.Clear();
-            int i = 0;
+            dtTable.DataSource = null;
+            dtTable.Rows.Clear();
             string query = String.Format("SELECT * FROM Taller.{0}", tablas[index].TableName);
              // crea un adaptador que va a obtener los datos por medio de la conección
             SqlDataAdapter adapter = new SqlDataAdapter(query, connectionSQL);
-            
-
+            tablas[index].Clear();
             adapter.Fill(tablas[index]);
             dtTable.DataSource = tablas[index];
-            dtRow.Columns.Clear();
-            if (tablas[index].PK) {
-                i++;
-            }
+            dtTable.Refresh();
 
+
+            dtRow.Columns.Clear();
+            int i = tablas[index].PK ? 1 : 0;
             for (; i < tablas[index].NomVariables.Length; i++) {
                 dtRow.Columns.Add(tablas[index].Columns[i].ColumnName, tablas[index].Columns[i].ColumnName);
             }
@@ -69,13 +68,9 @@ namespace bd_boga_sql_server {
             // la secuencia para insertar en la vase de datos, se usan los parametros @Nom, @Nac para
 
             try {
-                List<string> values = GetRowValues();
+                List<string> values = GetRowValues(dtRow, 0);
                 SqlCommand sqlCommand = new SqlCommand(tablas[index].InsertQuery, connectionSQL);
-                int i = 0;
-
-                if (tablas[index].PK) {
-                    i++;
-                }
+                int i = tablas[index].PK ? 1 : 0;
                 for (int j = 0; i < tablas[index].NomVariables.Length; i++, j++) {
                     sqlCommand.Parameters.AddWithValue(tablas[index].NomVariables[i], values[j]);
                 }
@@ -92,35 +87,59 @@ namespace bd_boga_sql_server {
            
         }
 
-        private List<string> GetRowValues() {
+        private List<string> GetRowValues(DataGridView table, int index, bool hasPKkey = false) {
             List<string> valores = new List<string>();
-            for (int i = 0; i < dtRow.Rows[0].Cells.Count; i++) {
-                valores.Add(dtRow.Rows[0].Cells[i].Value.ToString());
+            
+            for (int i = hasPKkey ? 1 : 0; i < table.Rows[index].Cells.Count; i++) {
+                valores.Add(table.Rows[index].Cells[i].Value.ToString());
             }
 
             return valores;
         }
 
         private void buttonModificar_Click(object sender, EventArgs e) {
+            UpdateData(comboBox1.SelectedIndex);
+        }
 
+        private void UpdateData(int tableNumber) {
+
+            try {
+                int index = int.Parse(dtTable[0, dtTable.CurrentCell.RowIndex].Value.ToString());
+                SqlCommand sqlCommand = new SqlCommand(tablas[tableNumber].UpdateQuery, connectionSQL);
+                sqlCommand.Parameters.AddWithValue(tablas[tableNumber].NomVariables[0], index);
+
+                List<string> values = GetRowValues(dtRow, 0);
+
+                int i = tablas[tableNumber].PK ? 1 : 0;
+
+                for (int j = 0; i < tablas[tableNumber].NomVariables.Length; i++, j++) {
+                    sqlCommand.Parameters.AddWithValue(tablas[tableNumber].NomVariables[i], values[j]);
+                }
+
+                sqlCommand.ExecuteNonQuery();
+                ShowTable(tableNumber);
+                
+            } catch (Exception ex) {
+                MessageBox.Show("Error: " + ex.Message);
+            }
         }
 
         private void buttonEliminar_Click(object sender, EventArgs e) {
             DeleteData(comboBox1.SelectedIndex);
         }
 
-        private void DeleteData(int index) {
+        private void DeleteData(int tableNumber) {
 
             try {
                 int clave = int.Parse(dtTable[0, dtTable.CurrentCell.RowIndex].Value.ToString());
-                SqlCommand sqlCommand = new SqlCommand(tablas[index].DeleteQuery, connectionSQL);
-                sqlCommand.Parameters.AddWithValue(tablas[index].NomVariables[0], clave);
+                SqlCommand sqlCommand = new SqlCommand(tablas[tableNumber].DeleteQuery, connectionSQL);
+                sqlCommand.Parameters.AddWithValue(tablas[tableNumber].NomVariables[0], clave);
 
                 // Agrega los valores al los parámetros del comando sql y lo ejecuta
 
                 sqlCommand.ExecuteNonQuery();
                 // Actualiza la tabla
-                ShowTable(index);
+                ShowTable(tableNumber);
 
             } catch (Exception ex) {
                 MessageBox.Show("Error: " + ex.Message);
@@ -128,6 +147,10 @@ namespace bd_boga_sql_server {
         }
 
         private void dataGridView1_RowHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e) {
+            List<string> values = GetRowValues(dtTable, e.RowIndex, true);
+            dtRow.Rows.Clear();
+            dtRow.Rows.Add(values.ToArray());
+            MessageBox.Show(values[0] +  " " +  values[1]);
 
         }
         private void enableCell(DataGridViewCell dc, bool enabled) {

@@ -11,7 +11,7 @@ namespace bd_boga_sql_server
     {
         public string InsertQuery { get ; protected set ; }
         public string DeleteQuery { get ; protected set ; }
-        public string ModifyQuery { get ; protected set ; }
+        public string UpdateQuery { get ; protected set ; }
         public string[] NomVariables { get ; protected set ; }
 
         public bool PK { get; internal set; }
@@ -41,8 +41,12 @@ namespace bd_boga_sql_server
             }
 
             InsertQuery = string.Format( "INSERT INTO Taller.{0} ( {1} ) VALUES( {2} )", TableName, attrInsert, varInsert ) ;
-            ModifyQuery = string.Format( "UPDATE Taller.{0} SET {1} WHERE {2}={3}", TableName, attrVarModify, columnas[0], NomVariables[0] );
+            UpdateQuery = string.Format( "UPDATE Taller.{0} SET {1} WHERE {2}={3}", TableName, attrVarModify, columnas[0], NomVariables[0] );
             DeleteQuery = string.Format( "DELETE FROM Taller.{0} WHERE {1}={2}", TableName, Columns[0].ColumnName, NomVariables[0] );
+        }
+
+        public void ClearData() {
+            Rows.Clear();
         }
     }
 }

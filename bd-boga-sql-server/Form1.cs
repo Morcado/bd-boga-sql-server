@@ -12,7 +12,7 @@ using System.Text.RegularExpressions;
 
 namespace bd_boga_sql_server {
     public partial class Form1 : Form {
-        private SqlConnection connectionSQL = new SqlConnection("Server=DESKTOP-CDSPVKR\\SQLEXPRESS;Database=TallerDeConfeccion;Trusted_connection=true");
+        private SqlConnection connectionSQL = new SqlConnection("Server=DESKTOP-CDSPVKR\\SQLEXPRESS;Database=TallerBoga;Trusted_connection=true");
 
         Tabla[] tablas =  new Tabla[11];
         public Form1() {

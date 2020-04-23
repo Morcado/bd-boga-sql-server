@@ -24,7 +24,8 @@ namespace bd_boga_sql_server
                 "IdCliente",
                 "Nombre",
                 "ApellidoPaterno",
-                "ApellidoMaterno"
+                "ApellidoMaterno",
+                "Telefono"
             };
 
             InitializeQuerys( columnas );
@@ -41,9 +42,7 @@ namespace bd_boga_sql_server
                 "ApellidoPaterno",
                 "ApellidoMaterno",
                 "Telefono",
-                "Calle",
-                "Numero",
-                "Colonia"
+                "Direccion"
             };
 
             InitializeQuerys( columnas );
@@ -60,8 +59,7 @@ namespace bd_boga_sql_server
                 "FechaPedido",
                 "FechaEntrega",
                 "Anticipo",
-                "IdCliente",
-                "IdEmpleado"
+                "IdCliente"
             };
 
             InitializeQuerys( columnas );
@@ -75,9 +73,9 @@ namespace bd_boga_sql_server
             string[] columnas = new string[] {
                 "IdPrenda",
                 "IdConfeccion",
-                "Costo",
-                "CostoExtra",
-                "Estatus"
+                "CostoTrabajo",
+                "CostoMaterial",
+                "Finalizado"
             };
 
             InitializeQuerys( columnas );
@@ -105,7 +103,6 @@ namespace bd_boga_sql_server
         {
             string[] columnas = new string[] {
                 "IdMaterial",
-                "CostoMaterial",
                 "Descripcion"
             };
 
@@ -120,7 +117,9 @@ namespace bd_boga_sql_server
             PK = false;
             string[] columnas = new string[] {
                 "IdTrabajo",
-                "IdMaterial"
+                "IdMaterial",
+                "Cantidad",
+                "PrecioCliente"
             };
 
             InitializeQuerys( columnas );
@@ -135,9 +134,7 @@ namespace bd_boga_sql_server
                 "IdProveedor",
                 "Nombre",
                 "Telefono",
-                "Calle",
-                "Numero",
-                "Colonia"
+                "Direccion"
             };
 
             InitializeQuerys( columnas );
@@ -167,7 +164,9 @@ namespace bd_boga_sql_server
                 "IdDetalleCompra",
                 "IdCompra",
                 "IdMaterial",
-                "Cantidad"
+                "CostoUnitario",
+                "Cantidad",
+                "Subtotal"
             };
 
             InitializeQuerys( columnas );

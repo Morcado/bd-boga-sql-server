@@ -52,8 +52,12 @@ namespace bd_boga_sql_server {
 
             dtRow.Columns.Clear();
             int i = tablas[index].PK ? 1 : 0;
-            for (; i < tablas[index].NomVariables.Length; i++) {
+            for (; i < tablas[index].NomVariables.Count; i++) {
+                if (tablas[index].Columns[i].ColumnName.Contains("Fecha")) {
+                    continue;
+                }
                 dtRow.Columns.Add(tablas[index].Columns[i].ColumnName, tablas[index].Columns[i].ColumnName);
+
             }
 
             dtRow.Rows.Add();
@@ -71,8 +75,9 @@ namespace bd_boga_sql_server {
                 List<string> values = GetRowValues(dtRow, 0);
                 SqlCommand sqlCommand = new SqlCommand(tablas[index].InsertQuery, connectionSQL);
                 int i = tablas[index].PK ? 1 : 0;
-                for (int j = 0; i < tablas[index].NomVariables.Length; i++, j++) {
-                    sqlCommand.Parameters.AddWithValue(tablas[index].NomVariables[i], values[j]);
+                for (int j = 0; i < tablas[index].NomVariables.Count; i++) {
+                    if (!tablas[index].NomVariables[i].Contains("Fecha"))
+                        sqlCommand.Parameters.AddWithValue(tablas[index].NomVariables[i], values[j++]);
                 }
 
                 sqlCommand.ExecuteNonQuery();
@@ -112,8 +117,9 @@ namespace bd_boga_sql_server {
 
                 int i = tablas[tableNumber].PK ? 1 : 0;
 
-                for (int j = 0; i < tablas[tableNumber].NomVariables.Length; i++, j++) {
-                    sqlCommand.Parameters.AddWithValue(tablas[tableNumber].NomVariables[i], values[j]);
+                for (int j = 0; i < tablas[tableNumber].NomVariables.Count; i++) {
+                    if (!tablas[tableNumber].NomVariables[i].Contains("Fecha"))
+                        sqlCommand.Parameters.AddWithValue(tablas[tableNumber].NomVariables[i], values[j++]);
                 }
 
                 sqlCommand.ExecuteNonQuery();
@@ -150,8 +156,6 @@ namespace bd_boga_sql_server {
             List<string> values = GetRowValues(dtTable, e.RowIndex, true);
             dtRow.Rows.Clear();
             dtRow.Rows.Add(values.ToArray());
-            MessageBox.Show(values[0] +  " " +  values[1]);
-
         }
         private void enableCell(DataGridViewCell dc, bool enabled) {
             //toggle read-only state

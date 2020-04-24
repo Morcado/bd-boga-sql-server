@@ -12,7 +12,7 @@ namespace bd_boga_sql_server
         public string InsertQuery { get ; protected set ; }
         public string DeleteQuery { get ; protected set ; }
         public string UpdateQuery { get ; protected set ; }
-        public string[] NomVariables { get ; protected set ; }
+        public List<string> NomVariables { get ; protected set ; }
 
         public bool PK { get; internal set; }
 
@@ -20,10 +20,13 @@ namespace bd_boga_sql_server
 
         public void InitializeQuerys( string[] columnas )
         {
-            NomVariables = new string[columnas.Length] ;
-
-            for( int i = 0 ; i < columnas.Length ; ++i )
-                NomVariables[i] = "@" + columnas[i] ;
+            NomVariables = new List<string>();
+            int unused = 0;
+            for (int i = 0; i < columnas.Length; ++i)
+                if (!columnas[i].Contains("Fecha"))
+                    NomVariables.Add("@" + columnas[i]);
+                else
+                    unused++;
 
             string attrInsert = columnas[1] ;
             string varInsert = NomVariables[1] ;
@@ -34,10 +37,12 @@ namespace bd_boga_sql_server
             Columns.Add( new DataColumn( columnas[1] ) );
             for( int i = 2 ; i < columnas.Length ; ++i )
             {
-                Columns.Add( new DataColumn( columnas[i] ) );
-                attrInsert += separacion + Columns[i] ;
-                varInsert += separacion + NomVariables[i] ;
-                attrVarModify += separacion + Columns[i] + '=' + NomVariables[i] ;
+                if (!columnas[i].Contains("Fecha")) {
+                    Columns.Add(new DataColumn(columnas[i]));
+                    attrInsert += separacion + Columns[i - unused];
+                    varInsert += separacion + NomVariables[i - unused];
+                    attrVarModify += separacion + Columns[i - unused] + '=' + NomVariables[i - unused];
+                }
             }
 
             InsertQuery = string.Format( "INSERT INTO Taller.{0} ( {1} ) VALUES( {2} )", TableName, attrInsert, varInsert ) ;

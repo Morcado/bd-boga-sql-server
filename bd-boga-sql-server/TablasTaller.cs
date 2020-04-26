@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿using System.Collections.Generic;
+using System.Data;
 
 namespace bd_boga_sql_server
 {
@@ -6,7 +7,7 @@ namespace bd_boga_sql_server
     {
         public TipoTrabajo() : base( "TipoTrabajo" )
         {
-            string[] columnas = new string[] {
+            List<string> columnas = new List<string> {
                 "IdTipoTrabajo",
                 "Costo",
                 "NombreConfeccion"
@@ -20,7 +21,7 @@ namespace bd_boga_sql_server
     {
         public Cliente() : base( "Cliente" )
         {
-            string[] columnas = new string[] {
+            List<string> columnas = new List<string> {
                 "IdCliente",
                 "Nombre",
                 "ApellidoPaterno",
@@ -36,7 +37,7 @@ namespace bd_boga_sql_server
     {
         public Empleado() : base( "Empleado" )
         {
-            string[] columnas = new string[] {
+            List<string> columnas = new List<string> {
                 "IdEmpleado",
                 "Nombre",
                 "ApellidoPaterno",
@@ -53,7 +54,7 @@ namespace bd_boga_sql_server
     {
         public Confeccion() : base( "Confeccion" )
         {
-            string[] columnas = new string[] {
+            List<string> columnas = new List<string> {
                 "IdConfeccion",
                 "CostoTotal",
                 "FechaPedido",
@@ -70,7 +71,7 @@ namespace bd_boga_sql_server
     {
         public Prenda() : base( "Prenda" )
         {
-            string[] columnas = new string[] {
+            List<string> columnas = new List<string> {
                 "IdPrenda",
                 "IdConfeccion",
                 "CostoTrabajo",
@@ -86,7 +87,7 @@ namespace bd_boga_sql_server
     {
         public Trabajo() : base( "Trabajo" )
         {
-            string[] columnas = new string[] {
+            List<string> columnas = new List<string> {
                 "IdTrabajo",
                 "IdTipoTrabajo",
                 "IdPrenda",
@@ -101,7 +102,7 @@ namespace bd_boga_sql_server
     {
         public Material() : base( "Material" )
         {
-            string[] columnas = new string[] {
+            List<string> columnas = new List<string> {
                 "IdMaterial",
                 "Descripcion"
             };
@@ -115,7 +116,7 @@ namespace bd_boga_sql_server
         public MaterialParaTrabajo() : base( "MaterialParaTrabajo" )
         {
             PK = false;
-            string[] columnas = new string[] {
+            List<string> columnas = new List<string> {
                 "IdTrabajo",
                 "IdMaterial",
                 "Cantidad",
@@ -130,7 +131,7 @@ namespace bd_boga_sql_server
     {
         public Proveedor() : base( "Proveedor" )
         {
-            string[] columnas = new string[] {
+            List<string> columnas = new List<string> {
                 "IdProveedor",
                 "Nombre",
                 "Telefono",
@@ -145,7 +146,7 @@ namespace bd_boga_sql_server
     {
         public Compra() : base( "Compra" )
         {
-            string[] columnas = new string[] {
+            List<string> columnas = new List<string> {
                 "IdCompra",
                 "IdProveedor",
                 "FechaCompra",
@@ -160,7 +161,7 @@ namespace bd_boga_sql_server
     {
         public DetalleCompra() : base( "DetalleCompra" )
         {
-            string[] columnas = new string[] {
+            List<string> columnas = new List<string> {
                 "IdDetalleCompra",
                 "IdCompra",
                 "IdMaterial",

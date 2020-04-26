@@ -109,7 +109,7 @@ CREATE TABLE Taller.Compra (
 
 ALTER TABLE Taller.Compra ADD CONSTRAINT DF_FECHACOMPRA DEFAULT GETDATE() FOR FechaCompra
 
-ALTER TABLE Taller.DetalleCompra (
+CREATE TABLE Taller.DetalleCompra (
     IdDetalleCompra BIGINT IDENTITY( 1, 1 ) NOT NULL,
     IdCompra BIGINT NOT NULL,
     IdMaterial BIGINT NOT NULL,

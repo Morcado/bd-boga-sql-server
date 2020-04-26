@@ -49,14 +49,35 @@ namespace bd_boga_sql_server {
             dtTable.DataSource = tablas[index];
             dtTable.Refresh();
 
+            // Fila de insertación
+
 
             dtRow.Columns.Clear();
             int i = tablas[index].PK ? 1 : 0;
             for (; i < tablas[index].NomVariables.Count; i++) {
-                if (tablas[index].Columns[i].ColumnName.Contains("Fecha")) {
-                    continue;
+                string columna = tablas[index].NomVariables[i];
+                if (columna.Contains("Id")) {
+
+                    string comboQuery = String.Format("SELECT * FROM Taller.{0}", columna.Substring(2));
+
+
+                    List<string> columnData = new List<string>();
+                    using (SqlCommand command = new SqlCommand(comboQuery, connectionSQL)) {
+                        using (SqlDataReader reader = command.ExecuteReader()) {
+                            while (reader.Read()) {
+                                columnData.Add(reader.GetInt64(0).ToString());
+                            }
+                        }
+                    }
+
+                    var column = new DataGridViewComboBoxColumn();
+                    column.HeaderText = columna;
+                    column.DataSource = columnData;
+                    dtRow.Columns.Add(column);
                 }
-                dtRow.Columns.Add(tablas[index].Columns[i].ColumnName, tablas[index].Columns[i].ColumnName);
+                else {
+                    dtRow.Columns.Add(columna, columna);
+                }
 
             }
 
@@ -76,8 +97,7 @@ namespace bd_boga_sql_server {
                 SqlCommand sqlCommand = new SqlCommand(tablas[index].InsertQuery, connectionSQL);
                 int i = tablas[index].PK ? 1 : 0;
                 for (int j = 0; i < tablas[index].NomVariables.Count; i++) {
-                    if (!tablas[index].NomVariables[i].Contains("Fecha"))
-                        sqlCommand.Parameters.AddWithValue(tablas[index].NomVariables[i], values[j++]);
+                    sqlCommand.Parameters.AddWithValue("@" + tablas[index].NomVariables[i], values[j++]);
                 }
 
                 sqlCommand.ExecuteNonQuery();
@@ -111,17 +131,16 @@ namespace bd_boga_sql_server {
             try {
                 int index = int.Parse(dtTable[0, dtTable.CurrentCell.RowIndex].Value.ToString());
                 SqlCommand sqlCommand = new SqlCommand(tablas[tableNumber].UpdateQuery, connectionSQL);
-                sqlCommand.Parameters.AddWithValue(tablas[tableNumber].NomVariables[0], index);
+                sqlCommand.Parameters.AddWithValue("@" + tablas[tableNumber].NomVariables[0], index);
 
                 List<string> values = GetRowValues(dtRow, 0);
 
                 int i = tablas[tableNumber].PK ? 1 : 0;
 
                 for (int j = 0; i < tablas[tableNumber].NomVariables.Count; i++) {
-                    if (!tablas[tableNumber].NomVariables[i].Contains("Fecha"))
-                        sqlCommand.Parameters.AddWithValue(tablas[tableNumber].NomVariables[i], values[j++]);
+                    string nomvariable = tablas[tableNumber].NomVariables[i];
+                    sqlCommand.Parameters.AddWithValue("@" + tablas[tableNumber].NomVariables[i], values[j++]);
                 }
-
                 sqlCommand.ExecuteNonQuery();
                 ShowTable(tableNumber);
                 
@@ -139,7 +158,7 @@ namespace bd_boga_sql_server {
             try {
                 int clave = int.Parse(dtTable[0, dtTable.CurrentCell.RowIndex].Value.ToString());
                 SqlCommand sqlCommand = new SqlCommand(tablas[tableNumber].DeleteQuery, connectionSQL);
-                sqlCommand.Parameters.AddWithValue(tablas[tableNumber].NomVariables[0], clave);
+                sqlCommand.Parameters.AddWithValue("@" + tablas[tableNumber].NomVariables[0], clave);
 
                 // Agrega los valores al los parámetros del comando sql y lo ejecuta
 

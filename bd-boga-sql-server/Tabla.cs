@@ -21,22 +21,35 @@ namespace bd_boga_sql_server
         public void InitializeQuerys( List<string> columnas )
         {
             NomVariables = new List<string>();
-            for (int i = 0; i < columnas.Count; ++i)
-                NomVariables.Add(columnas[i]);
+            for (int i = 0; i < columnas.Count; i++)
+                if (!columnas[i].Contains("Fecha") && !columnas[i].Contains("CostoTotal") && !columnas[i].Contains("Anticipo") && !columnas[i].Contains("CostoTrabajo") && !columnas[i].Contains("CostoMaterial"))
+                    NomVariables.Add(columnas[i]);
             string attrInsert = "";
             string varInsert = "";
             string attrVarModify = "";
             if (PK) {
                 attrInsert = string.Join(", ", columnas.Where(x => !x.Contains("Fecha") && !x.Contains("CostoTotal") && !x.Contains("Anticipo") && !x.Contains("CostoTrabajo") && !x.Contains("CostoMaterial")).Skip(1));
                 varInsert = "@" + string.Join(", @", columnas.Where(x => !x.Contains("Fecha") && !x.Contains("CostoTotal") && !x.Contains("Anticipo") && !x.Contains("CostoTrabajo") && !x.Contains("CostoMaterial")).Skip(1));
-                attrVarModify = "@" + string.Join(", @", columnas.Where(x => !x.Contains("Fecha") && !x.Contains("CostoTotal") && !x.Contains("Anticipo") && !x.Contains("CostoTrabajo") && !x.Contains("CostoMaterial")).Skip(1));
+                //attrVarModify = "@" + string.Join(", @", columnas.Where(x => !x.Contains("Fecha") && !x.Contains("CostoTotal") && !x.Contains("Anticipo") && !x.Contains("CostoTrabajo") && !x.Contains("CostoMaterial")).Skip(1));
+                for (int i = 1; i < columnas.Count; i++) {
+                    if (!columnas[i].Contains("Fecha") && !columnas[i].Contains("CostoTotal") && !columnas[i].Contains("Anticipo") && !columnas[i].Contains("CostoTrabajo") && !columnas[i].Contains("CostoMaterial"))
+
+                        attrVarModify += ", " + columnas[i] + " = @" + columnas[i];
+                }
+
             }
             else {
                 attrInsert = string.Join(", ", columnas.Where(x => !x.Contains("Fecha") && !x.Contains("CostoTotal") && !x.Contains("Anticipo") && !x.Contains("CostoTrabajo") && !x.Contains("CostoMaterial")));
                 varInsert = "@" + string.Join(", @", columnas.Where(x => !x.Contains("Fecha") && !x.Contains("CostoTotal") && !x.Contains("Anticipo") && !x.Contains("CostoTrabajo") && !x.Contains("CostoMaterial")));
                 attrVarModify = "@" + string.Join(", @", columnas.Where(x => !x.Contains("Fecha") && !x.Contains("CostoTotal") && !x.Contains("Anticipo") && !x.Contains("CostoTrabajo") && !x.Contains("CostoMaterial")));
+                for (int i = 0; i < columnas.Count; i++) {
+                    if (!columnas[i].Contains("Fecha") && !columnas[i].Contains("CostoTotal") && !columnas[i].Contains("Anticipo") && !columnas[i].Contains("CostoTrabajo") && !columnas[i].Contains("CostoMaterial"))
 
+                        attrVarModify += ", " + columnas[i] + "= @" + columnas[i];
+                }
             }
+            attrVarModify = attrVarModify.Substring(2);
+
             /*for ( int i = 0 ; i < columnas.Count ; i++)
             {
                 if (!columnas[i].Contains("Fecha") && !columnas[i].Contains("CostoTotal") && !columnas[i].Contains("Anticipo")) {

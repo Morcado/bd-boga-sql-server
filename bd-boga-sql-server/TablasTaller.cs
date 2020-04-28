@@ -80,6 +80,8 @@ namespace bd_boga_sql_server
             };
 
             InitializeQuerys( columnas );
+
+
         }
     }
 

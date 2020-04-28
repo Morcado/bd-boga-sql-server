@@ -52,7 +52,7 @@
             this.dtTable.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dtTable.Size = new System.Drawing.Size(791, 304);
             this.dtTable.TabIndex = 8;
-            this.dtTable.RowHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView1_RowHeaderMouseClick);
+            this.dtTable.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dtTable_CellClick);
             // 
             // dtRow
             // 

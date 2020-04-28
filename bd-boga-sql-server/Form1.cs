@@ -12,9 +12,17 @@ using System.Text.RegularExpressions;
 
 namespace bd_boga_sql_server {
     public partial class Form1 : Form {
-        private SqlConnection connectionSQL = new SqlConnection("Server=Luis\\SQLEXPRESS;Database=TallerBoga;Trusted_connection=true");
+        
+        #region Variables miembro
+        //Modificar de acuerdo a la ruta de la base de datos.
+        private readonly SqlConnection connectionSQL = new SqlConnection("Server=Luis\\SQLEXPRESS;Database=TallerBoga;Trusted_connection=true");
 
-        Tabla[] tablas =  new Tabla[11];
+        //Número de tablas que existen en la base de datos.
+        private readonly Tabla[] tablas =  new Tabla[11];
+        #endregion
+
+        #region Constructor
+        /*El indice del combobox principal selecciona la tabla.*/
         public Form1() {
             InitializeComponent();
             tablas[0]  = new TipoTrabajo();
@@ -32,101 +40,16 @@ namespace bd_boga_sql_server {
 
             connectionSQL.Open();
         }
+        #endregion
 
+        #region Eventos de la interfaz
         private void comboBox1_SelectedValueChanged(object sender, EventArgs e) {
             ShowTable(comboBox1.SelectedIndex);
             label1.Text = comboBox1.Text;
         }
 
-        private void ShowTable(int index) {
-            dtTable.DataSource = null;
-            dtTable.Rows.Clear();
-            string query = String.Format("SELECT * FROM Taller.{0}", tablas[index].TableName);
-             // crea un adaptador que va a obtener los datos por medio de la conección
-            SqlDataAdapter adapter = new SqlDataAdapter(query, connectionSQL);
-            tablas[index].Clear();
-            adapter.Fill(tablas[index]);
-            dtTable.DataSource = tablas[index];
-            dtTable.Refresh();
-
-            // Fila de inserción
-
-
-            dtRow.Columns.Clear();
-            int i = tablas[index].PK ? 1 : 0;
-            for (; i < tablas[index].NomVariables.Count; i++) {
-                string columna = tablas[index].NomVariables[i];
-                if (columna.Contains("Id")) {
-
-                    string comboQuery = String.Format("SELECT * FROM Taller.{0}", columna.Substring(2));
-
-
-                    List<string> columnData = new List<string>();
-                    using (SqlCommand command = new SqlCommand(comboQuery, connectionSQL)) {
-                        using (SqlDataReader reader = command.ExecuteReader()) {
-                            while (reader.Read()) {
-                                columnData.Add(reader.GetInt64(0).ToString());
-                            }
-                        }
-                    }
-
-                    var column = new DataGridViewComboBoxColumn();
-                    column.HeaderText = columna;
-                    column.DataSource = columnData;
-                    dtRow.Columns.Add(column);
-                }
-                else {
-                    dtRow.Columns.Add(columna, columna);
-                }
-
-            }
-
-            dtRow.Rows.Add();
-        }
-
         private void buttonAgregar_Click(object sender, EventArgs e) {
             InsertData(comboBox1.SelectedIndex);
-        }
-
-        public void InsertData(int index) {
-            // Obtiene el autor en el combo
-            // la secuencia para insertar en la vase de datos, se usan los parametros @Nom, @Nac para
-
-            try {
-                List<string> values = GetRowValues(dtRow, 0);
-                SqlCommand sqlCommand = new SqlCommand(tablas[index].InsertQuery, connectionSQL);
-                int i = tablas[index].PK ? 1 : 0;
-                for (int j = 0; i < tablas[index].NomVariables.Count; i++) {
-                    sqlCommand.Parameters.AddWithValue("@" + tablas[index].NomVariables[i], values[j++]);
-                }
-
-                sqlCommand.ExecuteNonQuery();
-                ShowTable(index);
-                // Actualiza la tabla
-
-            } 
-            catch (Exception ex) {
-                MessageBox.Show("Error: " + ex.Message);
-            }
-
-           
-        }
-
-        private List<string> GetRowValues(DataGridView table, int index, bool hasPKkey = false) {
-            List<string> valores = new List<string>();
-            
-            for (int i = hasPKkey ? 1 : 0; i < table.Rows[index].Cells.Count; i++) {
-                try
-                {
-                    valores.Add(table.Rows[index].Cells[i].Value.ToString());
-                }
-                catch( NullReferenceException )
-                {
-                    throw ;
-                }
-            }
-
-            return valores;
         }
 
         private void buttonModificar_Click(object sender, EventArgs e) {
@@ -142,6 +65,132 @@ namespace bd_boga_sql_server {
             
         }
 
+        private void buttonEliminar_Click(object sender, EventArgs e) {
+            DeleteData(comboBox1.SelectedIndex);
+        }
+
+        /* dtTable_CellClick( object sender, DataGridViewCellEventArgs e )
+         * Cada vez que se selecciona un registro en el datagrid, se obtiene la información para
+         * modificar/eliminar el registro. 
+         * Si se le da click a un registro, los valores aparecerán en el datagrid de
+         * "Agregar/Modificar".
+         */
+        private void dtTable_CellClick( object sender, DataGridViewCellEventArgs e )
+        {
+            List<string> values = GetRowValues(dtTable, e.RowIndex, true);
+            dtRow.Rows.Clear();
+            dtRow.Rows.Add( values.ToArray() );
+
+            //Nombre col + Valor
+            List<Tuple<string,string>> registro = new List<Tuple<string, string>>();
+
+            for( int i = 0 ; i < dtTable.Columns.Count ; ++i )  {
+                string nomColumna = dtTable.Columns[i].HeaderText ;
+                string valor = dtTable.Rows[e.RowIndex].Cells[i].Value.ToString();
+
+                var reg = new Tuple<string,string>( nomColumna, valor );
+                registro.Add( reg );
+            }
+
+            for( int i = 0 ; i < dtRow.Columns.Count ; ++i )    {
+                string nomCol = dtRow.Columns[i].HeaderText ;
+                Tuple<string,string> valor ;
+
+                if( ( valor = registro.Find( r => r.Item1 == nomCol ) ) != null )
+                    dtRow.Rows[0].Cells[i].Value = valor.Item2 ;
+            }
+        }
+        #endregion
+
+        #region Conexiones con la base de datos.
+        /*
+         * ShowTable( int index )
+         * Indexa en "tablas" la tabla seleccionada, recupera los registros de la base de datos
+         * y los inserta en el datagrid. Se utiliza también para refrescar la vista de los registros.
+         */
+        private void ShowTable( int index )
+        {
+            dtTable.DataSource = null;
+            dtTable.Rows.Clear();
+            string query = String.Format( "SELECT * FROM Taller.{0}", tablas[index].TableName );
+            // crea un adaptador que va a obtener los datos por medio de la conección
+            SqlDataAdapter adapter = new SqlDataAdapter( query, connectionSQL );
+            tablas[index].Clear();
+            adapter.Fill( tablas[index] );
+            dtTable.DataSource = tablas[index];
+            dtTable.Refresh();
+
+            // Fila de inserción
+            dtRow.Columns.Clear();
+            int i = tablas[index].PK ? 1 : 0;
+            for( ; i < tablas[index].NomVariables.Count; i++ )
+            {
+                string columna = tablas[index].NomVariables[i];
+                if( columna.Contains( "Id" ) )
+                {
+                    string comboQuery = string.Format( "SELECT * FROM Taller.{0}", columna.Substring( 2 ) );
+
+                    List<string> columnData = new List<string>();
+                    using( SqlCommand command = new SqlCommand( comboQuery, connectionSQL ) )
+                    {
+                        using( SqlDataReader reader = command.ExecuteReader() )
+                        {
+                            while( reader.Read() )
+                            {
+                                columnData.Add( reader.GetInt64( 0 ).ToString() );
+                            }
+                        }
+                    }
+
+                    var column = new DataGridViewComboBoxColumn
+                    {
+                        HeaderText = columna,
+                        DataSource = columnData
+                    };
+                    dtRow.Columns.Add( column );
+                }
+                else
+                {
+                    dtRow.Columns.Add( columna, columna );
+                }
+            }
+
+            dtRow.Rows.Add();
+        }
+
+        /*
+         * InsertData(int index)
+         * Toma los valores del datagrid "Agregar/Insertar" e inserta un nuevo registro
+         * a la tabla seleccionada en el combobox.
+         * Crea una conexión a la base de datos.
+         */
+        public void InsertData(int index) {
+            // Obtiene el autor en el combo
+            // la secuencia para insertar en la base de datos, se usan los parametros @Nom, @Nac para
+            try {
+                List<string> values = GetRowValues(dtRow, 0);
+                SqlCommand sqlCommand = new SqlCommand(tablas[index].InsertQuery, connectionSQL);
+                int i = tablas[index].PK ? 1 : 0;
+                for (int j = 0; i < tablas[index].NomVariables.Count; i++) {
+                    sqlCommand.Parameters.AddWithValue("@" + tablas[index].NomVariables[i], values[j++]);
+                }
+
+                sqlCommand.ExecuteNonQuery();
+
+                // Actualiza la tabla
+                ShowTable(index);
+            } 
+            catch (Exception ex) {
+                MessageBox.Show("Error: " + ex.Message);
+            }
+        }
+
+        /*
+         * UpdateData(int tableNumber)
+         * Toma la información de el registro seleccionado, y la información de el datagrid
+         * "Agregar/Modificar" para actualizar un registro, generalmente por medio del Id del
+         * elemento.
+         */
         private void UpdateData(int tableNumber) {
 
             try {
@@ -174,10 +223,10 @@ namespace bd_boga_sql_server {
             }
         }
 
-        private void buttonEliminar_Click(object sender, EventArgs e) {
-            DeleteData(comboBox1.SelectedIndex);
-        }
-
+        /*
+         * DeleteData(int tableNumber)
+         * Elimina el registro seleccionado en el datagrid.
+         */
         private void DeleteData(int tableNumber) {
 
             try {
@@ -196,11 +245,29 @@ namespace bd_boga_sql_server {
             }
         }
 
-        private void dataGridView1_RowHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e) {
-            List<string> values = GetRowValues(dtTable, e.RowIndex, true);
-            dtRow.Rows.Clear();
-            dtRow.Rows.Add(values.ToArray());
+        /*
+         * GetRowValues(DataGridView table, int index, bool hasPKkey = false)
+         * Obtiene los valores del datagrid "Agregar/Eliminar" y los regresa en una lista.
+         */
+        private List<string> GetRowValues(DataGridView table, int index, bool hasPKkey = false) 
+        {
+            List<string> valores = new List<string>();
+            
+            for (int i = hasPKkey ? 1 : 0; i < table.Rows[index].Cells.Count; i++) {
+                try
+                {
+                    valores.Add(table.Rows[index].Cells[i].Value.ToString());
+                }
+                catch( NullReferenceException )
+                {
+                    throw ;
+                }
+            }
+
+            return valores;
         }
+
+        //???
         private void enableCell(DataGridViewCell dc, bool enabled) {
             //toggle read-only state
             dc.ReadOnly = !enabled;
@@ -214,6 +281,6 @@ namespace bd_boga_sql_server {
                 dc.Style.ForeColor = Color.DarkGray;
             }
         }
-
+        #endregion   
     }
 }

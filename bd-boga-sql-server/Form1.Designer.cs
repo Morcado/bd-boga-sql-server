@@ -38,13 +38,18 @@
             // 
             // dtTable
             // 
+            this.dtTable.AllowUserToAddRows = false;
+            this.dtTable.AllowUserToDeleteRows = false;
             this.dtTable.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.dtTable.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
+            this.dtTable.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dtTable.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dtTable.Location = new System.Drawing.Point(21, 142);
             this.dtTable.Name = "dtTable";
+            this.dtTable.ReadOnly = true;
+            this.dtTable.RowHeadersVisible = false;
+            this.dtTable.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dtTable.Size = new System.Drawing.Size(791, 304);
             this.dtTable.TabIndex = 8;
             this.dtTable.RowHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView1_RowHeaderMouseClick);
@@ -53,10 +58,11 @@
             // 
             this.dtRow.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.dtRow.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
+            this.dtRow.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dtRow.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dtRow.Location = new System.Drawing.Point(21, 61);
             this.dtRow.Name = "dtRow";
+            this.dtRow.RowHeadersVisible = false;
             this.dtRow.Size = new System.Drawing.Size(791, 44);
             this.dtRow.TabIndex = 3;
             // 
@@ -139,9 +145,9 @@
             this.label4.AutoSize = true;
             this.label4.Location = new System.Drawing.Point(18, 45);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(93, 13);
+            this.label4.Size = new System.Drawing.Size(95, 13);
             this.label4.TabIndex = 2;
-            this.label4.Text = "Campos editables:";
+            this.label4.Text = "Agregar/Modificar:";
             // 
             // Form1
             // 
@@ -158,7 +164,7 @@
             this.Controls.Add(this.dtRow);
             this.Controls.Add(this.dtTable);
             this.Name = "Form1";
-            this.Text = "Form1";
+            this.Text = "Taller de Costura";
             ((System.ComponentModel.ISupportInitialize)(this.dtTable)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dtRow)).EndInit();
             this.ResumeLayout(false);

@@ -12,7 +12,7 @@ using System.Text.RegularExpressions;
 
 namespace bd_boga_sql_server {
     public partial class Form1 : Form {
-        private SqlConnection connectionSQL = new SqlConnection("Server=DESKTOP-CDSPVKR\\SQLEXPRESS;Database=TallerBoga;Trusted_connection=true");
+        private SqlConnection connectionSQL = new SqlConnection("Server=Luis\\SQLEXPRESS;Database=TallerBoga;Trusted_connection=true");
 
         Tabla[] tablas =  new Tabla[11];
         public Form1() {
@@ -49,7 +49,7 @@ namespace bd_boga_sql_server {
             dtTable.DataSource = tablas[index];
             dtTable.Refresh();
 
-            // Fila de insertación
+            // Fila de inserción
 
 
             dtRow.Columns.Clear();
@@ -116,14 +116,30 @@ namespace bd_boga_sql_server {
             List<string> valores = new List<string>();
             
             for (int i = hasPKkey ? 1 : 0; i < table.Rows[index].Cells.Count; i++) {
-                valores.Add(table.Rows[index].Cells[i].Value.ToString());
+                try
+                {
+                    valores.Add(table.Rows[index].Cells[i].Value.ToString());
+                }
+                catch( NullReferenceException )
+                {
+                    throw ;
+                }
             }
 
             return valores;
         }
 
         private void buttonModificar_Click(object sender, EventArgs e) {
-            UpdateData(comboBox1.SelectedIndex);
+            try
+            {
+                UpdateData(comboBox1.SelectedIndex);
+            }
+            catch( Exception exc )
+            {
+                MessageBox.Show( exc.Message );
+                throw;
+            }
+            
         }
 
         private void UpdateData(int tableNumber) {
@@ -133,8 +149,17 @@ namespace bd_boga_sql_server {
                 SqlCommand sqlCommand = new SqlCommand(tablas[tableNumber].UpdateQuery, connectionSQL);
                 sqlCommand.Parameters.AddWithValue("@" + tablas[tableNumber].NomVariables[0], index);
 
-                List<string> values = GetRowValues(dtRow, 0);
+                List<string> values ;
 
+                try
+                {
+                    values = GetRowValues(dtRow, 0);
+                }
+                catch( Exception )
+                {
+                    throw( new Exception( "Ingresa valores válidos en la primera ventana, y luego presiona \'Modificar\'" ) );
+                }
+                
                 int i = tablas[tableNumber].PK ? 1 : 0;
 
                 for (int j = 0; i < tablas[tableNumber].NomVariables.Count; i++) {

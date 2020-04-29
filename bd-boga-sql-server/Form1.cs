@@ -19,6 +19,9 @@ namespace bd_boga_sql_server {
 
         //Número de tablas que existen en la base de datos.
         private readonly Tabla[] tablas =  new Tabla[11];
+
+        //Ventana para mostrar registros en demanda.
+        private VentanaRegistros ventanaRegistros ;
         #endregion
 
         #region Constructor
@@ -77,6 +80,23 @@ namespace bd_boga_sql_server {
          */
         private void dtTable_CellClick( object sender, DataGridViewCellEventArgs e )
         {
+            if( e.RowIndex < 0 )
+                return ;
+
+            if( dtTable.Columns["Detalle Compra"] != null && e.ColumnIndex == dtTable.Columns["Detalle Compra"].Index )  {
+
+                string idCompra = dtTable.Rows[e.RowIndex].Cells[0].Value.ToString();
+                string query = @"SELECT IdDetalleCompra, IdCompra, d.IdMaterial, m.Descripcion, CostoUnitario, Cantidad, Subtotal FROM Taller.DetalleCompra AS d 
+INNER JOIN Taller.Material AS m ON d.IdMaterial = m.IdMaterial WHERE IdCompra =" + idCompra ;
+
+                if( ventanaRegistros != null )
+                    ventanaRegistros.Close();
+
+                ventanaRegistros = new VentanaRegistros( connectionSQL, query );
+                ventanaRegistros.Show();
+                return ;
+            }
+
             List<string> values = GetRowValues(dtTable, e.RowIndex, true);
             dtRow.Rows.Clear();
             dtRow.Rows.Add( values.ToArray() );
@@ -99,8 +119,8 @@ namespace bd_boga_sql_server {
                 if( ( valor = registro.Find( r => r.Item1 == nomCol ) ) != null )   {
                     Tabla tabMostrar = tablas[comboBox1.SelectedIndex];
 
-                    if( tabMostrar.AdditionalInfoCols.Exists( c => c == i ) )
-                        dtRow.Rows[0].Cells[i].Value = valor.Item2.ToString() + ": " + tabMostrar.EnumeracionInformacion[int.Parse(valor.Item2) - 1].Item2 ;
+                    if( tabMostrar.AdditionalInfoCols != null && tabMostrar.AdditionalInfoCols.Exists( c => c == i ) )
+                        dtRow.Rows[0].Cells[i].Value = valor.Item2.ToString() + ": " + tabMostrar.EnumeracionInformacion.Find( en => en.Item1 == int.Parse( valor.Item2 ) ).Item2 ;
 
                     else
                         dtRow.Rows[0].Cells[i].Value = valor.Item2 ;
@@ -121,6 +141,7 @@ namespace bd_boga_sql_server {
             string query ;
             dtTable.DataSource = null;
             dtTable.Rows.Clear();
+            dtTable.Columns.Clear();
 
             if( !string.IsNullOrWhiteSpace( tablaMostrar.SelectQuery ) )
                 query = tablaMostrar.SelectQuery ;
@@ -133,6 +154,18 @@ namespace bd_boga_sql_server {
             tablaMostrar.Clear();
             adapter.Fill( tablaMostrar );
             dtTable.DataSource = tablaMostrar ;
+
+            if( tablaMostrar.TableName == "Compra" && dtTable.Columns["Detalle Compra"] == null )    {
+                DataGridViewButtonColumn detalleCompra = new DataGridViewButtonColumn() {
+                    Name = "Detalle Compra",
+                    HeaderText = "Detalle Compra",
+                    UseColumnTextForButtonValue = true,
+                    Text = "Detalle"
+                };
+
+                dtTable.Columns.Add( detalleCompra );
+            }
+
             dtTable.Refresh();
 
             //Obtener la información adicional de la tabla.
@@ -171,7 +204,7 @@ namespace bd_boga_sql_server {
                                 if( !string.IsNullOrWhiteSpace( tablaMostrar.AdditionalInfoQuery ) )
                                 {
                                     if( tablaMostrar.AdditionalInfoCols != null && tablaMostrar.AdditionalInfoCols.Exists( col => col == i-1 ) )
-                                        opcion += ": " + tablaMostrar.EnumeracionInformacion[(int)id - 1].Item2 ;
+                                        opcion += ": " + tablaMostrar.EnumeracionInformacion.Find( e => e.Item1 == id ).Item2 ;
                                 }
 
                                 columnData.Add( opcion.ToString() );
@@ -289,6 +322,9 @@ namespace bd_boga_sql_server {
         private List<string> GetRowValues(DataGridView table, int index, bool hasPKkey = false) 
         {
             List<string> valores = new List<string>();
+
+            if( index < 0 )
+                return valores ;
             
             for (int i = hasPKkey ? 1 : 0; i < table.Rows[index].Cells.Count; i++) {
                 try

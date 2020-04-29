@@ -144,6 +144,13 @@ INNER JOIN Taller.TipoTrabajo as tp ON t.IdTipoTrabajo = tp.IdTipoTrabajo";
             };
 
             InitializeQuerys( columnas );
+
+            SelectQuery = @"SELECT IdMaterialParaTrabajo, IdTrabajo, mt.IdMaterial, m.Descripcion, Cantidad, PrecioCliente FROM Taller.MaterialParaTrabajo AS mt
+INNER JOIN Taller.Material AS m on mt.IdMaterial = m.IdMaterial";
+
+            AdditionalInfoQuery = @"SELECT IdMaterial, Descripcion FROM Taller.Material";
+            AdditionalInfoCols = new List<int>();
+            AdditionalInfoCols.Add( 1 );
         }
     }
 
@@ -174,6 +181,13 @@ INNER JOIN Taller.TipoTrabajo as tp ON t.IdTipoTrabajo = tp.IdTipoTrabajo";
             };
 
             InitializeQuerys( columnas );
+
+            SelectQuery = @"SELECT IdCompra, c.IdProveedor, p.Nombre, FechaCompra, 
+            Total FROM Taller.Compra AS c INNER JOIN Taller.Proveedor AS p ON c.IdProveedor = p.IdProveedor" ;
+
+            AdditionalInfoQuery = @"SELECT IdProveedor, Nombre FROM Taller.Proveedor";
+            AdditionalInfoCols = new List<int>();
+            AdditionalInfoCols.Add( 0 );
         }
     }
 
@@ -191,6 +205,13 @@ INNER JOIN Taller.TipoTrabajo as tp ON t.IdTipoTrabajo = tp.IdTipoTrabajo";
             };
 
             InitializeQuerys( columnas );
+
+            SelectQuery = @"SELECT IdDetalleCompra, IdCompra, d.IdMaterial, m.Descripcion, CostoUnitario, Cantidad, Subtotal FROM Taller.DetalleCompra AS d 
+INNER JOIN Taller.Material AS m ON d.IdMaterial = m.IdMaterial" ;
+
+            AdditionalInfoQuery = @"SELECT IdMaterial, Descripcion FROM Taller.Material";
+            AdditionalInfoCols = new List<int>();
+            AdditionalInfoCols.Add( 1 );
         }
     }
 }

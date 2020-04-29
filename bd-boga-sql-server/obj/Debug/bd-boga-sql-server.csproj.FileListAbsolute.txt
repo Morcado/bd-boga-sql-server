@@ -27,3 +27,4 @@ C:\Users\Morcado\Documents\Admin-BD\SQL-Server\bd-boga-sql-server\bd-boga-sql-se
 C:\Users\Morcado\Documents\Admin-BD\SQL-Server\bd-boga-sql-server\bd-boga-sql-server\obj\Debug\bd-boga-sql-server.pdb
 C:\Users\LuisN\Documents\GitHubRepositories\bd-boga-sql-server\bd-boga-sql-server\obj\Debug\bd-boga-sql-server.csprojAssemblyReference.cache
 C:\Users\LuisN\Documents\GitHubRepositories\bd-boga-sql-server\bd-boga-sql-server\obj\Debug\bd-boga-sql-server.csproj.CoreCompileInputs.cache
+C:\Users\LuisN\Documents\GitHubRepositories\bd-boga-sql-server\bd-boga-sql-server\obj\Debug\bd_boga_sql_server.VentanaRegistros.resources

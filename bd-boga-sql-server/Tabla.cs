@@ -12,7 +12,11 @@ namespace bd_boga_sql_server
         public string InsertQuery { get ; protected set ; }
         public string DeleteQuery { get ; protected set ; }
         public string UpdateQuery { get ; protected set ; }
+        public string SelectQuery { get ; protected set ; }
+        public string AdditionalInfoQuery { get ; protected set ; }
         public List<string> NomVariables { get ; protected set ; }
+        public List<Tuple<long, string>> EnumeracionInformacion { get ; set ; }
+        public List<int> AdditionalInfoCols ;
 
         public bool PK { get; internal set; }
 
@@ -24,6 +28,7 @@ namespace bd_boga_sql_server
             for (int i = 0; i < columnas.Count; i++)
                 if (!columnas[i].Contains("Fecha") && !columnas[i].Contains("CostoTotal") && !columnas[i].Contains("Anticipo") && !columnas[i].Contains("CostoTrabajo") && !columnas[i].Contains("CostoMaterial"))
                     NomVariables.Add(columnas[i]);
+
             string attrInsert = "";
             string varInsert = "";
             string attrVarModify = "";

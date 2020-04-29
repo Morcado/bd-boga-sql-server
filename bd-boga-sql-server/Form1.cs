@@ -96,8 +96,15 @@ namespace bd_boga_sql_server {
                 string nomCol = dtRow.Columns[i].HeaderText ;
                 Tuple<string,string> valor ;
 
-                if( ( valor = registro.Find( r => r.Item1 == nomCol ) ) != null )
-                    dtRow.Rows[0].Cells[i].Value = valor.Item2 ;
+                if( ( valor = registro.Find( r => r.Item1 == nomCol ) ) != null )   {
+                    Tabla tabMostrar = tablas[comboBox1.SelectedIndex];
+
+                    if( tabMostrar.AdditionalInfoCols.Exists( c => c == i ) )
+                        dtRow.Rows[0].Cells[i].Value = valor.Item2.ToString() + ": " + tabMostrar.EnumeracionInformacion[int.Parse(valor.Item2) - 1].Item2 ;
+
+                    else
+                        dtRow.Rows[0].Cells[i].Value = valor.Item2 ;
+                }
             }
         }
         #endregion
@@ -110,22 +117,43 @@ namespace bd_boga_sql_server {
          */
         private void ShowTable( int index )
         {
+            Tabla tablaMostrar = tablas[index] ;
+            string query ;
             dtTable.DataSource = null;
             dtTable.Rows.Clear();
-            string query = String.Format( "SELECT * FROM Taller.{0}", tablas[index].TableName );
+
+            if( !string.IsNullOrWhiteSpace( tablaMostrar.SelectQuery ) )
+                query = tablaMostrar.SelectQuery ;
+
+            else
+                query = string.Format( "SELECT * FROM Taller.{0}", tablas[index].TableName );
+
             // crea un adaptador que va a obtener los datos por medio de la conección
             SqlDataAdapter adapter = new SqlDataAdapter( query, connectionSQL );
-            tablas[index].Clear();
-            adapter.Fill( tablas[index] );
-            dtTable.DataSource = tablas[index];
+            tablaMostrar.Clear();
+            adapter.Fill( tablaMostrar );
+            dtTable.DataSource = tablaMostrar ;
             dtTable.Refresh();
+
+            //Obtener la información adicional de la tabla.
+            if( !string.IsNullOrWhiteSpace( tablaMostrar.AdditionalInfoQuery ) )
+            {
+                tablaMostrar.EnumeracionInformacion = new List<Tuple<long, string>>();
+                using( SqlDataReader lector = new SqlCommand( tablaMostrar.AdditionalInfoQuery, connectionSQL ).ExecuteReader() ) {
+                    while( lector.Read() )
+                    {
+                        var en = new Tuple<long, string>( lector.GetInt64( 0 ), lector.GetString( 1 ) );
+                        tablaMostrar.EnumeracionInformacion.Add( en );
+                    }
+                }
+            }
 
             // Fila de inserción
             dtRow.Columns.Clear();
-            int i = tablas[index].PK ? 1 : 0;
-            for( ; i < tablas[index].NomVariables.Count; i++ )
+            int i = tablaMostrar.PK ? 1 : 0;
+            for( ; i < tablaMostrar.NomVariables.Count; i++ )
             {
-                string columna = tablas[index].NomVariables[i];
+                string columna = tablaMostrar.NomVariables[i];
                 if( columna.Contains( "Id" ) )
                 {
                     string comboQuery = string.Format( "SELECT * FROM Taller.{0}", columna.Substring( 2 ) );
@@ -137,7 +165,16 @@ namespace bd_boga_sql_server {
                         {
                             while( reader.Read() )
                             {
-                                columnData.Add( reader.GetInt64( 0 ).ToString() );
+                                long id = reader.GetInt64( 0 );
+                                string opcion = id.ToString();
+
+                                if( !string.IsNullOrWhiteSpace( tablaMostrar.AdditionalInfoQuery ) )
+                                {
+                                    if( tablaMostrar.AdditionalInfoCols != null && tablaMostrar.AdditionalInfoCols.Exists( col => col == i-1 ) )
+                                        opcion += ": " + tablaMostrar.EnumeracionInformacion[(int)id - 1].Item2 ;
+                                }
+
+                                columnData.Add( opcion.ToString() );
                             }
                         }
                     }
@@ -256,7 +293,17 @@ namespace bd_boga_sql_server {
             for (int i = hasPKkey ? 1 : 0; i < table.Rows[index].Cells.Count; i++) {
                 try
                 {
-                    valores.Add(table.Rows[index].Cells[i].Value.ToString());
+                    if( tablas[comboBox1.SelectedIndex].EnumeracionInformacion != null )    {
+                        string info = table.Rows[index].Cells[i].Value.ToString();
+
+                        if(  info.IndexOf(':') > -1 )
+                            info = info.Substring( 0, info.IndexOf(':') );
+
+                        valores.Add( info );
+                    }
+                            
+                    else
+                        valores.Add(table.Rows[index].Cells[i].Value.ToString());
                 }
                 catch( NullReferenceException )
                 {

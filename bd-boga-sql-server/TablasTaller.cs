@@ -81,7 +81,17 @@ namespace bd_boga_sql_server
 
             InitializeQuerys( columnas );
 
+            SelectQuery = @"SELECT p.IdPrenda, p.IdConfeccion, ( cl.Nombre + ' ' + cl.ApellidoPaterno + ' ' + cl.ApellidoMaterno + ' ' + CONVERT( varchar, c.FechaPedido, 1 ) ) AS InfoConfeccion,
+                            CostoTrabajo, CostoMaterial, Finalizado
+                            FROM Taller.Prenda AS p 
+                            INNER JOIN Taller.Confeccion AS c ON p.IdConfeccion = c.IdConfeccion
+                            INNER JOIN Taller.Cliente AS cl ON c.IdCliente = cl.IdCliente" ;
 
+            AdditionalInfoQuery = @"SELECT c.IdConfeccion, ( cl.Nombre + ' ' + cl.ApellidoPaterno + ' ' + cl.ApellidoMaterno + ' ' + CONVERT( varchar, c.FechaPedido, 1 ) ) AS InfoConfeccion
+                FROM Taller.Confeccion AS c INNER JOIN Taller.Cliente AS cl ON c.IdCliente = cl.IdCliente" ;
+
+            AdditionalInfoCols = new List<int>();
+            AdditionalInfoCols.Add( 0 );
         }
     }
 
@@ -97,6 +107,13 @@ namespace bd_boga_sql_server
             };
 
             InitializeQuerys( columnas );
+
+            SelectQuery = @"SELECT IdTrabajo, t.IdTipoTrabajo, NombreConfeccion AS DescTrabajo, IdPrenda, IdEmpleado FROM Taller.Trabajo AS t 
+INNER JOIN Taller.TipoTrabajo as tp ON t.IdTipoTrabajo = tp.IdTipoTrabajo";
+
+            AdditionalInfoQuery = @"SELECT IdTipoTrabajo, NombreConfeccion FROM Taller.TipoTrabajo" ;
+            AdditionalInfoCols = new List<int>();
+            AdditionalInfoCols.Add( 0 );
         }
     }
 
@@ -117,8 +134,9 @@ namespace bd_boga_sql_server
     {
         public MaterialParaTrabajo() : base( "MaterialParaTrabajo" )
         {
-            PK = false;
+            PK = true ;
             List<string> columnas = new List<string> {
+                "IdMaterialParaTrabajo",
                 "IdTrabajo",
                 "IdMaterial",
                 "Cantidad",
